@@ -1,0 +1,21 @@
+version: 0.2
+phases:
+ install:
+   commands:
+     - echo install step...
+ pre_build:
+   commands:
+     - echo logging in to AWS ECR...
+     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+       #- $(aws ecr get-login --no-include-email --region us-east-1)
+ build:
+   commands:
+     - echo build Docker image on `date`
+     - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+       # - docker build folder_1/ -t $IMAGE_REPO_NAME:$IMAGE_TAG_2  # WITH FOLDER- CAN USE MULTIPLE FOLDER
+     - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+ post_build:
+   commands:
+     - echo build Docker image complete `date`
+     - echo push latest Docker images to ECR...
+     - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG

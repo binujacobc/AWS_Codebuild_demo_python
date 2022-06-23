@@ -1,10 +1,10 @@
-FROM python:3.7
+FROM public.ecr.aws/lambda/python:3.8
 
 WORKDIR /opt/app
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements-prod.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
